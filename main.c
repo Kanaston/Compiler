@@ -1,18 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int leer()
+int main()
+{
+
+}
+
+char *leer(nombre, espacio)
 {
     FILE *archivo;
     char caracter;
-    archivo = fopen("Prueba.txt","r");
+    char *ret = malloc(espacio);
+    if(!ret)
+        return NULL;
+    
+    archivo = fopen(nombre,"r");
     if (archivo == NULL)
     {
-        printf("\nError de apertura del archivo. \n\n");
+        return NULL;
     }
     else
     {
-        printf("\nEl contenido del archivo de prueba es \n\n");
         caracter = fgetc(archivo);
         while(caracter != EOF)
         {
@@ -21,5 +29,4 @@ int leer()
         }
     }
     fclose(archivo);
-    return 0;
 }
