@@ -1,32 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
-int main()
+void leer(char *buffer, char *main_code,int space)
 {
-
-}
-
-char *leer(nombre, espacio)
-{
-    FILE *archivo;
-    char caracter;
-    char *ret = malloc(espacio);
-    if(!ret)
-        return NULL;
-    
-    archivo = fopen(nombre,"r");
+    char lector;
+    FILE *archivo = fopen(main_code, "r");
     if (archivo == NULL)
     {
-        return NULL;
+        printf("Error: Could not open file\n");
     }
     else
     {
-        caracter = fgetc(archivo);
-        while(caracter != EOF)
-        {
-            printf("%c\n",caracter);
-            caracter = fgetc(archivo);
-        }
+        fread(buffer, sizeof(char), space, archivo);
     }
     fclose(archivo);
+}
+
+void leerToken(char caracter){
+    switch(caracter){
+        
+    }
+}
+
+int main()
+{
+    char buffer[256];
+    char main_code[] = "test.ck";
+    leer(buffer, main_code,256);
+    printf("%s", buffer);
+    return 0;
 }

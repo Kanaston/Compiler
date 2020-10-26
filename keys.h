@@ -1,0 +1,11 @@
+#define PROGRAMA 256
+#define INICIO 257
+#define FIN 258
+#define VAR 259
+#define ENTRADA 260
+#define MOSTRAR 261
+#define REGRESA 262
+#define SI 263
+#define ENTONCES 264
+#define NO 265
+#define POR 266
