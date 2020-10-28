@@ -48,6 +48,14 @@ void Constante(char *palabra)
 }
 void Simbolo(char *palabra)
 {
+     if (palabra == ";" || palabra == "{" || palabra == "}" || palabra == "<" || palabra == ">" || palabra == ">=" || palabra == "<=" || palabra == "!=" || palabra == "&&" || palabra == "||" || palabra == "!")
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 enum TipoToken
 {
