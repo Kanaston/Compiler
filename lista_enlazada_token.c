@@ -4,31 +4,50 @@
 #include <string.h>
 #include <ctype.h>
 
-
-void asignarPalRes(char *palabra){
-if(palabra=="INCIO" || palabra=="FIN" ||palabra=="POR" || palabra=="SI" || palabra=="MOSTRAR" || palabra=="REGRESA"
-|| palabra=="ENTONCES" || palabra=="ROMPER" || palabra=="CONTRA" || palabra=="VAR"){
-    return 1;
-}else{
-    return 0;
-} 
-
-}
-
-
-void Identificador(char *palabra){
-    if(isalpha(palabra[0])){
-        
+void CrearBuffer(char *buffer){
+   
+  /*  buffer=NULL;
+    if(buffer != NULL){
+        return 1;
     }else{
         return 0;
     }
+    esto lo puse en caso de que llegara con informacion el buffer 
+    */
 
 }
-void Constante(char *palabra){
 
+void asignarPalRes(char *palabra)
+{
+    if (palabra == "INCIO" || palabra == "FIN" || palabra == "POR" || palabra == "SI" || palabra == "MOSTRAR" || palabra == "REGRESA" || palabra == "ENTONCES" || palabra == "ROMPER" || palabra == "CONTRA" || palabra == "VAR")
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
-void Simbolo(char *palabra){
 
+void Identificador(char caracter)
+{
+    if (isalpha(caracter))
+    {
+        if((isalpha(caracter) || isalnum(caracter))){
+            return 1;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+void Constante(char *palabra)
+{
+    
+}
+void Simbolo(char *palabra)
+{
 }
 enum TipoToken
 {
@@ -46,9 +65,7 @@ struct Token
     int Valor;
     int NoLin;
     int NoCol;
-
 };
-
 
 struct nodo
 {
@@ -102,12 +119,12 @@ int main()
     token.Tipo = Sim;
     strcpy(token.Lexema, "(");
     token.Valor = 0;
+    /*CrearBuffer(token); esto lo puse para mandar a la funcion del buffer*/
 
     insertar(token);
 
     printf("=====LISTA DE TOKENS=====\n");
     imprimirLista(raiz);
-
 
     getch();
     return 0;
