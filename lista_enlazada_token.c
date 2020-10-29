@@ -60,10 +60,16 @@ void Identificador(char caracter)
         return 0;
     }
 }
+
 void Constante(char *palabra)
 {
+    if(isdigit(palabra))
+        return 1;
+    else
+        return 0;
     
 }
+
 void Simbolo(char *palabra)
 {
      if (palabra == ";" || palabra == "{" || palabra == "}" || palabra == "<" || palabra == ">" || palabra == ">=" || palabra == "<=" || palabra == "!=" || palabra == "&&" || palabra == "||" || palabra == "!")
