@@ -5,6 +5,23 @@
 #include <ctype.h>
 
 void CrearBuffer(char *buffer){
+    char buffer[200], pt; //arreglo de gran tamaño    char *pt;
+     int longTexto;
+
+   gets(buffer);   //almacena el nombre en el arreglo
+
+   longTexto =  strlen(buffer);
+    if (longTexto==0) return NULL;
+
+   pt = (char*)malloc(sizeof(char) * (longTexto + 1));
+         // Se genera el espacio exacto
+         // +1 para que almacene el 0 al final de texto
+
+   strcpy(pt,buffer);
+   // las dos instrucciones anteriores se pueden reemplazar por:
+   // pt = strdup(buffer);
+
+   return pt;
    
   /*  buffer=NULL;
     if(buffer != NULL){
@@ -14,6 +31,7 @@ void CrearBuffer(char *buffer){
     }
     esto lo puse en caso de que llegara con informacion el buffer 
     */
+   
 
 }
 
