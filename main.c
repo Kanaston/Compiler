@@ -50,6 +50,6 @@ int main()
     char main_code[] = "test.ck";
     leer(buffer, main_code,256);
     printf("%s", buffer);
-    /*PToken(buffer);*/
+    //PToken(buffer);
     return 0;
 }

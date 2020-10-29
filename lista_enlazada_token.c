@@ -151,7 +151,7 @@ int main()
     token.Tipo = Sim;
     strcpy(token.Lexema, "(");
     token.Valor = 0;
-    /*CrearBuffer(token); esto lo puse para mandar a la funcion del buffer*/
+    //CrearBuffer(token); esto lo puse para mandar a la funcion del buffer
 
     insertar(token);
 
