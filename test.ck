@@ -1,1 +1,3 @@
-INICIO VAR suma=10+5; 
+INICIO VAR suma=10+5;
+FIN
+asdsadsa
