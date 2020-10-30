@@ -1,1 +1,1 @@
-esta es una prueba; 
+INICIO VAR suma=10+5; 

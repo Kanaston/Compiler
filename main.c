@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <conio.h>
+#include <curses.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -34,20 +34,21 @@ struct nodo *raiz = NULL;
 struct nodo *actual = NULL;
 char bufferLectura[100] = "";
 int estadoAsignacion = 0;
+int statusLectura = 0;
 char tipoAsignacion = 0;
 
 int asignarPalRes(char *palabra)
 {
-    if (palabra == "INCIO" 
-        || palabra == "FIN" 
-        || palabra == "POR" 
-        || palabra == "SI" 
-        || palabra == "MOSTRAR" 
-        || palabra == "REGRESA" 
-        || palabra == "ENTONCES" 
-        || palabra == "ROMPER" 
-        || palabra == "CONTRA" 
-        || palabra == "VAR")
+    if (strcmp(palabra, "INICIO") == 0 
+        || strcmp(palabra, "FIN") == 0 
+        || strcmp(palabra, "POR") == 0
+        || strcmp(palabra, "SI") == 0
+        || strcmp(palabra, "MOSTRAR") == 0
+        || strcmp(palabra, "REGRESA") == 0
+        || strcmp(palabra, "ENTONCES") == 0
+        || strcmp(palabra, "ROMPER") == 0
+        || strcmp(palabra, "CONTRA") == 0
+        || strcmp(palabra, "VAR") == 0)
     {
         tipoAsignacion = 1;
         return 1;
@@ -63,11 +64,13 @@ int asignarIdentificador(char caracter)
     if(isalpha(caracter) && estadoAsignacion==0){
         tipoAsignacion = 2;
         estadoAsignacion = 1;
+        statusLectura =1;
         bufferLectura[strlen(bufferLectura)] = caracter;
         return 0;
     }
     else if(isalnum(caracter) && estadoAsignacion==1){
         bufferLectura[strlen(bufferLectura)] = caracter;
+        statusLectura =1;
         return 0;
     }  
     else{
@@ -80,10 +83,12 @@ int asignarConstante(char caracter)
     if(isdigit(caracter)){
         estadoAsignacion = 1;
         tipoAsignacion = 3;
+        statusLectura =1;
         bufferLectura[strlen(bufferLectura)] = caracter;
         return 0;
     }
     else if(isdigit(caracter) && estadoAsignacion==1){
+        statusLectura =1;
         return 0;
     }else{
         return 1;
@@ -110,6 +115,7 @@ int asignarSimbolo(char caracter)
         || caracter == '!')
     {
         bufferLectura[strlen(bufferLectura)] = caracter;
+        statusLectura =1;
         tipoAsignacion = 4;
         return 1;
     }
@@ -166,23 +172,38 @@ void leer(char *path){
     }else{
        while ((caracter=fgetc(archivo)) != EOF)
        {   
-           if(tipoAsignacion == 0 || tipoAsignacion == 2)
+           if(tipoAsignacion == 0 || tipoAsignacion == 2) 
            {
                 estadoLectura = asignarIdentificador(caracter);
+                if(asignarTipoToken(estadoLectura) == 1){
+                    estadoLectura = 0;
+                };
            }
-           if(tipoAsignacion == 0 || tipoAsignacion == 3)
+           if(tipoAsignacion == 0 || tipoAsignacion == 3) 
            {
                 estadoLectura = asignarConstante(caracter);
+                if(asignarTipoToken(estadoLectura) == 1){
+                    estadoLectura = 0;
+                };
            }
            if(tipoAsignacion == 0 || tipoAsignacion == 4)
            {
-                printf("%c",caracter);
                 estadoLectura = asignarSimbolo(caracter);
+                if(asignarTipoToken(estadoLectura)==1){
+                    estadoLectura = 0;
+                };
            }
            
-           if(estadoLectura == 1){
-               if(tipoAsignacion == 2){
+           
+       }
+    }
+}
+
+int asignarTipoToken(int estadoLectura){
+    if(estadoLectura==1 && statusLectura == 1){
+        if(tipoAsignacion == 2){
                    asignarPalRes(bufferLectura);
+                   
                }
                 struct Token token;
                 strcpy(token.Nombre, "ParentesisDer");
@@ -197,16 +218,15 @@ void leer(char *path){
                 insertar(token);
                 tipoAsignacion = 0;
                 estadoAsignacion = 0;
-                estadoLectura = 0;
-           }
-           
-       }
+                statusLectura = 0;
+                return 1;
     }
+    return 0;
 }
 
 int main()
 {
-     printf("=====LISTA DE TOKENS=====\n");
+    printf("=====LISTA DE TOKENS=====\n");
     leer("test.ck");
     imprimirLista(raiz);
     getch();
