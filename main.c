@@ -155,6 +155,8 @@ void imprimirLista(struct nodo *reco)
         printf("Tipo: %d\n", reco->info.Tipo);
         printf("Lexema: %s\n", reco->info.Lexema);
         printf("Valor: %d\n", reco->info.Valor);
+        printf("Numero de Linea: %d\n",reco->info.NoLin);
+        printf("Numero de Columna: %d\n",reco->info.NoCol);
         printf("-------\n");
         imprimirLista(reco->der);
     }
@@ -172,34 +174,37 @@ void leer(char *path){
     }else{
        while ((caracter=fgetc(archivo)) != EOF)
        {   
+           if(caracter == '\n'){
+               fila++;
+           }
            if(tipoAsignacion == 0 || tipoAsignacion == 2) 
            {
                 estadoLectura = asignarIdentificador(caracter);
-                if(asignarTipoToken(estadoLectura) == 1){
+                if(asignarTipoToken(estadoLectura,columna,fila) == 1){
                     estadoLectura = 0;
                 };
            }
            if(tipoAsignacion == 0 || tipoAsignacion == 3) 
            {
                 estadoLectura = asignarConstante(caracter);
-                if(asignarTipoToken(estadoLectura) == 1){
+                if(asignarTipoToken(estadoLectura,columna,fila) == 1){
                     estadoLectura = 0;
                 };
            }
            if(tipoAsignacion == 0 || tipoAsignacion == 4)
            {
                 estadoLectura = asignarSimbolo(caracter);
-                if(asignarTipoToken(estadoLectura)==1){
+                if(asignarTipoToken(estadoLectura,columna,fila)==1){
                     estadoLectura = 0;
                 };
            }
-           
+           columna++;
            
        }
     }
 }
 
-int asignarTipoToken(int estadoLectura){
+int asignarTipoToken(int estadoLectura, int col, int fila){
     if(estadoLectura==1 && statusLectura == 1){
         if(tipoAsignacion == 2){
                    asignarPalRes(bufferLectura);
@@ -214,11 +219,13 @@ int asignarTipoToken(int estadoLectura){
                     token.Valor = 0; 
                 }
                 strcpy(token.Lexema, bufferLectura);
-                memset( bufferLectura, 0, 100 );
+                token.NoCol = col-strlen(bufferLectura);
+                token.NoLin = fila;
                 insertar(token);
                 tipoAsignacion = 0;
                 estadoAsignacion = 0;
                 statusLectura = 0;
+                memset( bufferLectura, 0, 100 );
                 return 1;
     }
     return 0;
