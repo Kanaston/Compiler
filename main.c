@@ -115,7 +115,7 @@ int asignarSimbolo(char caracter)
     }
     else
     {
-        return 1;
+        return 0;
     }
 }
 
@@ -165,17 +165,21 @@ void leer(char *path){
         printf("Fallo en la lectura del archivo %s", path);
     }else{
        while ((caracter=fgetc(archivo)) != EOF)
-       {
+       {   
            if(tipoAsignacion == 0 || tipoAsignacion == 2)
            {
                 estadoLectura = asignarIdentificador(caracter);
-           }else if(tipoAsignacion == 0 || tipoAsignacion == 3)
+           }
+           if(tipoAsignacion == 0 || tipoAsignacion == 3)
            {
                 estadoLectura = asignarConstante(caracter);
-           }else if(tipoAsignacion == 0 || tipoAsignacion == 4)
+           }
+           if(tipoAsignacion == 0 || tipoAsignacion == 4)
            {
+                printf("%c",caracter);
                 estadoLectura = asignarSimbolo(caracter);
            }
+           
            if(estadoLectura == 1){
                if(tipoAsignacion == 2){
                    asignarPalRes(bufferLectura);
@@ -189,7 +193,7 @@ void leer(char *path){
                     token.Valor = 0; 
                 }
                 strcpy(token.Lexema, bufferLectura);
-                free(bufferLectura);
+                memset( bufferLectura, 0, 100 );
                 insertar(token);
                 tipoAsignacion = 0;
                 estadoAsignacion = 0;
@@ -204,7 +208,6 @@ int main()
 {
      printf("=====LISTA DE TOKENS=====\n");
     leer("test.ck");
-   
     imprimirLista(raiz);
     getch();
     return 0;
