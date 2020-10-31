@@ -36,7 +36,7 @@ char bufferLectura[100] = "";
 int estadoAsignacion = 0;
 int statusLectura = 0;
 char tipoAsignacion = 0;
-int columna = 1;
+int columna = 0;
 int fila = 1;
 
 int asignarPalRes(char *palabra)
@@ -141,7 +141,7 @@ void imprimirLista(struct nodo *reco)
         printf("Lexema: %s\n", reco->info.Lexema);
         printf("Valor: %d\n", reco->info.Valor);
         printf("Numero de Linea: %d\n", reco->info.NoLin);
-        printf("Numero de Columna: %d\n", reco->info.NoCol);
+        // printf("Numero de Columna: %d\n", reco->info.NoCol);
         printf("-------\n");
         imprimirLista(reco->der);
     }
@@ -165,7 +165,7 @@ void leer(char *path)
             if (caracter == '\n')
             {
                 fila++;
-                columna = 1;
+                columna = 0;
             }
         }
         leerToken(caracter);
@@ -221,7 +221,7 @@ int asignarTipoToken(int estadoLectura)
             token.Valor = 0;
         }
         strcpy(token.Lexema, bufferLectura);
-        token.NoCol = columna - strlen(bufferLectura);
+        token.NoCol = columna;
         token.NoLin = fila;
         insertar(token);
         tipoAsignacion = 0;
