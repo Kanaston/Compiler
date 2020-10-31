@@ -172,7 +172,7 @@ void leer(char *path)
     }
 }
 
-void leerToken(char caracter)
+void leerToken(char *caracter)
 {
     int estadoLectura = 0;
     if (tipoAsignacion == 0 || tipoAsignacion == 2)

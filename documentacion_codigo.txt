@@ -1,0 +1,13 @@
+--------------DOCUMENTACIÓN ANALIZADOR LÉXICO-----------------------
+En este programa generamos un analizador léxico a partir de una lista doblemente enlazada.
+Donde este programa se pensó desde el inicio que se iba a hacer implementando la lógica de semestres anteriores
+en una clase llamada Teoría de la computación, donde programamos un analizador léxico a partir de un automatata generado
+en JFLAP.
+Así mismo partimos programando este analizador léxico, donde generamos nuestros automatas para la aceptación de cadenas.
+Nuestro programa funciona de la siguiente manera:
+    -Extrae la información de un archivo .txt y comienza a leer letra por letra.
+    -Una vez reconocido un caracter manda llamar una funcion que determina el tipo de Token .
+    -Una vez extraída la información lo almacenamos en un búffer temporal.
+    -A partir de la información almacenadda en el búffer empieza a guarda el token en un nodo de una lista enlazada.
+    -Una vez finalizado la lectura del archivo y los tokens asignados muestra el valor que tienen los nodos de la lista 
+     enlazada.
