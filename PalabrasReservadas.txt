@@ -1,0 +1,33 @@
+PALABRAS RESERVADAS
+- Operadores de asignación:
+	= 	asignación.
+	== 	igualación.
+- Operadores aritméticos:
+	+	Suma
+    -	Resta
+	*	Multiplicación
+	/	División
+	%	Porcentaje
+    ()  Parentesis
+- Símbolos especiales:
+	;   Final de una cadena;
+	{}	Inicio y fin de una serie de instrucciónes.
+	<	Mayor que.
+    > 	Menor que.
+    <=	Mayor o igual que.
+    >=	Menor o igual que.
+	!=	Diferente que
+	&&	Y(and)
+	||	o(or)
+	!	Negacion(not)	
+    "   Comillas
+- Palabras reservadas:	
+    Por		        ciclo for
+    Si…entonces		if..else
+    Inicio,fin	    Inicialización y final del cuerpo del programa
+    Mostrar	        Imprimir en pantalla
+    Entrada	        Leer una variable por medio del teclado.
+    Regresa	        Regresa un valor de una función.
+    Var		        Declarar variables
+    Romper	        break
+    Contra	        else
