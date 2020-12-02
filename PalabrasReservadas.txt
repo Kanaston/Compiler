@@ -22,12 +22,12 @@ PALABRAS RESERVADAS
 	!	Negacion(not)	
     "   Comillas
 - Palabras reservadas:	
-    Por		        ciclo for
-    Si…entonces		if..else
-    Inicio,fin	    Inicialización y final del cuerpo del programa
-    Mostrar	        Imprimir en pantalla
-    Entrada	        Leer una variable por medio del teclado.
-    Regresa	        Regresa un valor de una función.
-    Var		        Declarar variables
-    Romper	        break
-    Contra	        else
+    POR		        ciclo for
+    Si..ENTONCES		if..else
+    INICIO,FIN	    Inicialización y final del cuerpo del programa
+    MOSTRAR	        Imprimir en pantalla
+    ENTRADA	        Leer una variable por medio del teclado.
+    REGRESA	        Regresa un valor de una función.
+    VAR		        Declarar variables
+    ROMPER	        break
+    CONTRA	        else

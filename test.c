@@ -12,6 +12,15 @@ enum TipoToken
     Cad
 };
 
+char *TiposVAR[] =
+{
+    "numero",
+    "caracter",
+    "cadena",
+    "decimal",
+    "booleano"
+};
+
 struct Token
 {
     char Nombre[80];
@@ -85,11 +94,78 @@ struct Token GetToken()
     }
 }
 
+int compararVAR(char *lexema)
+{
+    for (int i = 0; i <  sizeof(TiposVAR)/sizeof(TiposVAR[0]); i++)
+    {
+        if((strcmp(lexema, TiposVAR[i])==0)){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/*-------------------------- VAR --------------------------- */
+void sintaxisVAR(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "VAR") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            sintaxisVAR(token, edo);
+        }
+        break;
+    case 2:
+        if (token.Tipo == Id)
+        {
+            edo = 3;
+            token = GetToken();
+            sintaxisVAR(token, edo);
+        }
+        break;
+    case 3:
+        if (strcmp(token.Lexema, ":") == 0)
+        {
+            edo = 4;
+            token = GetToken();
+            sintaxisVAR(token, edo);
+        }
+        break;
+    case 4:
+        if (compararVAR(token.Lexema))
+        {
+            edo = 5;
+            token = GetToken();
+            sintaxisVAR(token, edo);
+        }
+        break;
+    case 5:
+        if (strcmp(token.Lexema, ";") == 0)
+        {
+            edo = 6;
+            token = GetToken();
+        }
+        else if (strcmp(token.Lexema, ",") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            sintaxisVAR(token, edo);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+/*----------------------- MOSTRAR -------------------------- */
 void sintaxisMostrar(struct Token token, int edo)
 {
     if (edo == 1)
     {
-        if (strcmp(token.Lexema, "Mostrar") == 0)
+        if (strcmp(token.Lexema, "MOSTRAR") == 0)
         {
             edo = 2;
             token = GetToken();
@@ -152,45 +228,47 @@ void sintaxisMostrar(struct Token token, int edo)
         }
     }
 }
+/*-------------------------------------------------------- */
 
 int main()
 {
-    raiz = NULL;
-    actual = NULL;
+    // raiz = NULL;
+    // actual = NULL;
 
-    struct Token token;
-    strcpy(token.Nombre, "PALRES");
-    token.Tipo = PalRes;
-    strcpy(token.Lexema, "Mostrar");
-    token.Valor = 0;
-    insertar(token);
+    // struct Token token;
+    // strcpy(token.Nombre, "PALRES");
+    // token.Tipo = PalRes;
+    // strcpy(token.Lexema, "Mostrar");
+    // token.Valor = 0;
+    // insertar(token);
 
-    strcpy(token.Nombre, "ParIzq");
-    token.Tipo = Sim;
-    strcpy(token.Lexema, "(");
-    token.Valor = 0;
-    insertar(token);
+    // strcpy(token.Nombre, "ParIzq");
+    // token.Tipo = Sim;
+    // strcpy(token.Lexema, "(");
+    // token.Valor = 0;
+    // insertar(token);
 
-    strcpy(token.Nombre, "CAD");
-    token.Tipo = Cad;
-    strcpy(token.Lexema, "Hola Mundo");
-    token.Valor = 0;
-    insertar(token);
+    // strcpy(token.Nombre, "CAD");
+    // token.Tipo = Cad;
+    // strcpy(token.Lexema, "Hola Mundo");
+    // token.Valor = 0;
+    // insertar(token);
 
-    strcpy(token.Nombre, "ParDer");
-    token.Tipo = Sim;
-    strcpy(token.Lexema, ")");
-    token.Valor = 0;
-    insertar(token);
+    // strcpy(token.Nombre, "ParDer");
+    // token.Tipo = Sim;
+    // strcpy(token.Lexema, ")");
+    // token.Valor = 0;
+    // insertar(token);
 
-    strcpy(token.Nombre, "PuntoComa");
-    token.Tipo = Sim;
-    strcpy(token.Lexema, ";");
-    token.Valor = 0;
-    insertar(token);
-    printf("=====LISTA DE TOKENS=====\n");
-    actual = raiz;
-    sintaxisMostrar(actual->info, 1);
+    // strcpy(token.Nombre, "PuntoComa");
+    // token.Tipo = Sim;
+    // strcpy(token.Lexema, ";");
+    // token.Valor = 0;
+    // insertar(token);
+    // printf("=====LISTA DE TOKENS=====\n");
+    // actual = raiz;
+    // sintaxisMostrar(actual->info, 1);
+    printf("%i",sizeof(TiposVAR[0])); 
     getch();
     return 0;
 }
