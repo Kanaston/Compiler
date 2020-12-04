@@ -13,13 +13,19 @@ enum TipoToken
 };
 
 char *TiposVAR[] =
-{
-    "numero",
-    "caracter",
-    "cadena",
-    "decimal",
-    "booleano"
-};
+    {
+        "numero",
+        "caracter",
+        "cadena",
+        "decimal",
+        "booleano"};
+
+char TiposOPArit[] =
+    {
+        '*',
+        '/',
+        '+',
+        '-'};
 
 struct Token
 {
@@ -96,13 +102,105 @@ struct Token GetToken()
 
 int compararVAR(char *lexema)
 {
-    for (int i = 0; i <  sizeof(TiposVAR)/sizeof(TiposVAR[0]); i++)
+    for (int i = 0; i < sizeof(TiposVAR) / sizeof(TiposVAR[0]); i++)
     {
-        if((strcmp(lexema, TiposVAR[i])==0)){
+        if ((strcmp(lexema, TiposVAR[i]) == 0))
+        {
             return 0;
         }
     }
     return 1;
+}
+int compararOPArit(char lexema)
+{
+    for (int i = 0; i < sizeof(TiposOPArit) / sizeof(TiposOPArit[0]); i++)
+    {
+        if ((strcmp(lexema, TiposOPArit[i]) == 0))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+void expAritmetica(struct Token token, int edo){
+    switch (edo)
+    {
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            break;
+    }
+
+}
+void expFactor(struct Token token, int edo){
+    switch (edo)
+    {
+        case 1:
+            if(strcmp(token.Lexema, ")") == 0){
+                edo =2
+                token=GetToken();
+            }
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            break;
+    }
+}
+/*-------------------OPERACIONES ARITMETICAS------------------------*/
+void expAritOP(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (token.Tipo == Num)
+        {
+            edo = 2;
+            token = GetToken();
+            expAritOP(token, edo);
+        }
+        break;
+    case 2:
+        if (compararOPArit(token.Lexema))
+        {
+            edo = 3;
+            token = GetToken();
+            expAritOP(token, edo);
+        }
+        else
+        {
+            token = GetToken();
+        }
+        break;
+    case 3:
+        if (token.Tipo == Num)
+        {
+            edo = 4;
+            token = GetToken();
+            expAritOP(token, edo);
+        }
+        break;
+    case 4:
+        if (compararOPArit(token.Lexema))
+        {
+            edo = 1;
+            token = GetToken();
+            expAritOP(token, edo);
+        }
+        else
+        {
+            token = GetToken();
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 /*-------------------------- VAR --------------------------- */
@@ -155,15 +253,13 @@ void sintaxisVAR(struct Token token, int edo)
             sintaxisVAR(token, edo);
         }
         break;
-    default:
-        break;
     }
 }
 
 /*----------------------- MOSTRAR -------------------------- */
 void sintaxisMostrar(struct Token token, int edo)
 {
-    if (edo == 1)
+    switch (edo)
     {
         if (strcmp(token.Lexema, "MOSTRAR") == 0)
         {
@@ -171,61 +267,36 @@ void sintaxisMostrar(struct Token token, int edo)
             token = GetToken();
             sintaxisMostrar(token, edo);
         }
-        else
-        {
-            printf("Se esperaba la palabra Mostrar\n");
-        }
-    }
-    if (edo == 2)
-    {
+    case 2:
         if (strcmp(token.Lexema, "(") == 0)
         {
             edo = 3;
             token = GetToken();
             sintaxisMostrar(token, edo);
         }
-        else
-        {
-            printf("Se esperaba un parentesis\n");
-        }
-    }
-    if (edo == 3)
-    {
+        break;
+    case 3:
         if (token.Tipo == Cad || token.Tipo == Id)
         {
             edo = 4;
             token = GetToken();
             sintaxisMostrar(token, edo);
         }
-        else
-        {
-            printf("Se esperaba una cadena\n");
-        }
-    }
-    if (edo == 4)
-    {
+        break;
+    case 4:
         if (strcmp(token.Lexema, ")") == 0)
         {
             edo = 5;
             token = GetToken();
             sintaxisMostrar(token, edo);
         }
-        else
-        {
-            printf("Se esperaba un parentesis\n");
-        }
-    }
-    if (edo == 5)
-    {
+        break;
+    case 5:
         if (token.Tipo == Sim)
         {
-            printf("Cadena correcta");
             token = GetToken();
         }
-        else
-        {
-            printf("Se esperaba un ;\n");
-        }
+        break;
     }
 }
 /*-------------------------------------------------------- */
@@ -268,7 +339,7 @@ int main()
     // printf("=====LISTA DE TOKENS=====\n");
     // actual = raiz;
     // sintaxisMostrar(actual->info, 1);
-    printf("%i",sizeof(TiposVAR[0])); 
+    printf("%i", sizeof(TiposVAR[0]));
     getch();
     return 0;
 }
