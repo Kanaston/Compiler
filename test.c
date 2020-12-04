@@ -122,35 +122,40 @@ int compararOPArit(char lexema)
     }
     return 1;
 }
-void expAritmetica(struct Token token, int edo){
+void expAritmetica(struct Token token, int edo)
+{
     switch (edo)
     {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
-
 }
-void expFactor(struct Token token, int edo){
+void expFactor(struct Token token, int edo)
+{
     switch (edo)
     {
-        case 1:
-            if(strcmp(token.Lexema, ")") == 0){
-                edo =2
-                token=GetToken();
-            }
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        default:
-            break;
+    case 1:
+        if (strcmp(token.Lexema, ")") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+        }
+        else if (compararOPArit(token.Lexema))
+        {
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    default:
+        break;
     }
 }
 /*-------------------OPERACIONES ARITMETICAS------------------------*/
