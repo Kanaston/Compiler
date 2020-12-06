@@ -41,7 +41,7 @@ int fila = 1;
 
 int asignarPalRes(char *palabra)
 {
-    if (strcmp(palabra, "INICIO") == 0 || strcmp(palabra, "FIN") == 0 || strcmp(palabra, "POR") == 0 || strcmp(palabra, "SI") == 0 || strcmp(palabra, "MOSTRAR") == 0 || strcmp(palabra, "REGRESA") == 0 || strcmp(palabra, "ENTONCES") == 0 || strcmp(palabra, "ROMPER") == 0 || strcmp(palabra, "CONTRA") == 0 || strcmp(palabra, "VAR") == 0)
+    if (strcmp(palabra, "INICIO") == 0 || strcmp(palabra, "FIN") == 0 || strcmp(palabra, "POR") == 0 || strcmp(palabra, "SI") == 0 || strcmp(palabra, "MOSTRAR") == 0 || strcmp(palabra, "REGRESA") == 0 || strcmp(palabra, "ENTONCES") == 0 || strcmp(palabra, "ROMPER") == 0 || strcmp(palabra, "NO") == 0 || strcmp(palabra, "VAR") == 0)
     {
         tipoAsignacion = 1;
         return 1;
