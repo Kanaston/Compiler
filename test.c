@@ -20,20 +20,32 @@ char *TiposVAR[] =
         "decimal",
         "booleano"};
 
-char TiposOPArit[] =
+char *TiposOPArit[] =
     {
-        '*',
-        '/',
-        '+',
-        '-'};
+        "*",
+        "/",
+        "+",
+        "-"};
 
-char TipoOPArit[] = {
+char TiposOPLogSimb[] = {
     "|",
     "&",
     "=",
     "<",
     ">",
     "!"};
+char *TiposOpLog[] = {
+    "||",
+    "&&",
+    "!=",
+    ">=",
+    "<=",
+    "=="};
+
+char *TiposBoolean[] = {
+    "true",
+    "false"};
+
 struct Token
 {
     char Nombre[80];
@@ -118,7 +130,7 @@ int compararVAR(char *lexema)
     }
     return 1;
 }
-int compararOPArit(char lexema)
+int compararOPArit(char *lexema)
 {
     for (int i = 0; i < sizeof(TiposOPArit) / sizeof(TiposOPArit[0]); i++)
     {
@@ -129,7 +141,7 @@ int compararOPArit(char lexema)
     }
     return 1;
 }
-int compararOPLog(char lexema)
+int compararOPLog(char *lexema)
 {
     for (int i = 0; i < sizeof(TiposOPArit) / sizeof(TiposOPArit[0]); i++)
     {
@@ -140,7 +152,43 @@ int compararOPLog(char lexema)
     }
     return 1;
 }
-
+int compararBoolean(char *lexema)
+{
+    for (int i = 0; i < sizeof(TiposBoolean) / sizeof(TiposBoolean[0]); i++)
+    {
+        if ((strcmp(lexema, TiposBoolean[i]) == 0))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+int compararOpLogSimb(char *lexema)
+{
+    for (int i = 0; i < sizeof(TiposOPLogSimb) / sizeof(TiposOPLogSimb[0]); i++)
+    {
+        if ((strcmp(lexema, TiposOPLogSimb[i]) == 0))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+void compararOpLog(char *lexema)
+{
+    char *temp = GetToken().Lexema;
+    if ((compararOpLogSimb(lexema) == 0) && (compararOpLogSimb(temp) == 0))
+    {
+        for (int i = 0; i < sizeof(TiposOpLog) / sizeof(TiposOpLog[0]); i++)
+        {
+            if ((strcmp(lexema, TiposOpLog[i]) == 0))
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
 /*--------------------- IF -----------------------*/
 void factorElse(struct Token token, int edo)
 {
@@ -308,14 +356,97 @@ void expLog(struct Token token, int edo)
         break;
     case 2:
         if (compararOPLog(token.Lexema) == 0)
-        {   
-            edo=1;
-            token= GetToken();
+        {
+            edo = 1;
+            token = GetToken();
         }
         else
         {
             expFactor(token, 1);
         }
+        break;
+    default:
+        break;
+    }
+}
+void factorOpLog(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            factorOpLog(token, edo);
+        }
+        else if (compararOPLog(token.Lexema) == 0)
+        {
+            token = GetToken();
+            opLog(token, 1);
+        }
+        else
+        {
+            if (compararBoolean(token.Lexema) == 0)
+            {
+                token = GetToken();
+            }
+        }
+        break;
+    case 2:
+        edo = 3;
+        token = GetToken();
+        opLog(token, 1);
+        break;
+    case 3:
+        if (strcmp(token.Lexema, ")") == 0)
+        {
+            token = GetToken();
+        }
+        break;
+    default:
+        break;
+    }
+}
+void opLog(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (compararBoolean(token.Lexema) == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            opLog(token, edo);
+        }
+        break;
+    case 2:
+        if (compararBoolean(token.Lexema)==0)
+        {
+            edo = 2;
+            token = GetToken();
+            opLog(token, edo);
+        }
+        break;
+    case 3:
+        if (compararBoolean(token.Lexema) == 0)
+        {
+            edo = 4;
+            token = GetToken();
+            opLog(token, edo);
+        }
+        else
+        {
+            token = GetToken();
+        }
+    case 4:
+        if (compararBoolean(token.Lexema) == 0)
+        {
+            edo = 1;
+            token = GetToken();
+            opLog(token, edo);
+        }
+        break;
         break;
     default:
         break;
