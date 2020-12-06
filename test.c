@@ -27,6 +27,13 @@ char TiposOPArit[] =
         '+',
         '-'};
 
+char TipoOPArit[] = {
+    "|",
+    "&",
+    "=",
+    "<",
+    ">",
+    "!"};
 struct Token
 {
     char Nombre[80];
@@ -122,37 +129,233 @@ int compararOPArit(char lexema)
     }
     return 1;
 }
-void expAritmetica(struct Token token, int edo)
+int compararOPLog(char lexema)
+{
+    for (int i = 0; i < sizeof(TiposOPArit) / sizeof(TiposOPArit[0]); i++)
+    {
+        if ((strcmp(lexema, TiposOPArit[i]) == 0))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/*--------------------- IF -----------------------*/
+void factorElse(struct Token token, int edo)
 {
     switch (edo)
     {
     case 1:
+        if ((strcmp(token.Lexema, "ELSE") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 2;
+            token = GetToken();
+            factorElse(token, edo);
+        }
         break;
     case 2:
+        edo = 3;
+        sentencia(token);
+        factorElse(token, edo);
         break;
     case 3:
+        if ((strcmp(token.Lexema, "END") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 4;
+            token = GetToken();
+            factorElse(token, edo);
+        }
+        break;
+    case 4:
+        if ((strcmp(token.Lexema, "ELSE") == 0) && (token.Tipo == PalRes))
+        {
+            token = GetToken();
+        }
         break;
     default:
         break;
     }
 }
-void expFactor(struct Token token, int edo)
+void factorElseIf(struct Token token, int edo)
 {
     switch (edo)
     {
     case 1:
-        if (strcmp(token.Lexema, ")") == 0)
+        if ((strcmp(token.Lexema, "ELSE") == 0) && (token.Tipo == PalRes))
         {
             edo = 2;
             token = GetToken();
         }
-        else if (compararOPArit(token.Lexema))
+        break;
+    case 2:
+        if ((strcmp(token.Lexema, "IF") == 0) && (token.Tipo == PalRes))
         {
+            edo = 3;
+            token = GetToken();
+        }
+        break;
+    case 3:
+        edo = 4;
+        expFactor(token, 1);
+        token = GetToken();
+        break;
+    case 4:
+        if ((strcmp(token.Lexema, "ELSE") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 5;
+            token = GetToken();
+        }
+        break;
+    case 5:
+        if ((strcmp(token.Lexema, "IF") == 0) && (token.Tipo == PalRes))
+        {
+            token = GetToken();
+        }
+        break;
+    default:
+        break;
+    }
+}
+void factorIf(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            factorIf(token, edo);
         }
         break;
     case 2:
+        edo = 3;
+        expLog(token, 1);
+        factorIf(token, edo);
         break;
     case 3:
+        if (strcmp(token.Lexema, ")") == 0)
+        {
+            edo = 4;
+            token = GetToken();
+            factorIf(token, edo);
+        }
+        break;
+    case 4:
+        if ((strcmp(token.Lexema, "ENTONCES") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 5;
+            token = GetToken();
+            factorIf(token, edo);
+        }
+        break;
+    case 5:
+        edo = 6;
+        sentencia(token);
+        factorIf(token, edo);
+        break;
+    case 6:
+        if ((strcmp(token.Lexema, "END") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 5;
+            token = GetToken();
+            factorIf(token, edo);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void sentenciaIF(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if ((strcmp(token.Lexema, "END") == 0) && (token.Tipo == PalRes))
+        {
+            edo = 2;
+            token = GetToken();
+            sentenciaIf(token, edo);
+        }
+        break;
+    case 2:
+        edo = 3;
+        factorIf(token, edo);
+    case 3:
+        if ((strcmp(token.Lexema, "IF") == 0) && (token.Tipo == PalRes))
+        {
+            token = GetToken();
+        }
+        break;
+    default:
+        break;
+    }
+}
+/*-------------- EXPRESION LOGICA ----------------*/
+void expLog(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "!") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            expLog(token, edo);
+        }
+        break;
+    case 2:
+        if (compararOPLog(token.Lexema) == 0)
+        {   
+            edo=1;
+            token= GetToken();
+        }
+        else
+        {
+            expFactor(token, 1);
+        }
+        break;
+    default:
+        break;
+    }
+}
+/*------------------- LEER------------------------*/
+void leer(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+            leer(token, edo);
+        }
+        break;
+    case 2:
+        if (token.Tipo == Id)
+        {
+            edo = 3;
+            token = GetToken();
+            leer(token, edo);
+        }
+        break;
+    case 3:
+        if (strcmp(token.Lexema, ")") == 0)
+        {
+            edo = 4;
+            token = GetToken();
+            leer(token, edo);
+        }
+        break;
+    case 4:
+        if (strcmp(token.Lexema, ";") == 0)
+        {
+            edo = 4;
+            token = GetToken();
+        }
         break;
     default:
         break;
@@ -207,7 +410,63 @@ void expAritOP(struct Token token, int edo)
         break;
     }
 }
+void expAritmetica(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        expFactor(token, 1);
+        edo = 2;
+        token = GetToken();
+        break;
+    case 2:
+        if (compararOPArit(token.Lexema) == 0)
+        {
+            token = GetToken();
+            edo = 1;
+        }
+        break;
 
+    default:
+        break;
+    }
+}
+void expFactor(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            edo = 2;
+            token = GetToken();
+        }
+        else if (compararOPArit(token.Lexema))
+        {
+            GetToken();
+        }
+        break;
+    case 2:
+        if (compararOPArit(token.Lexema))
+        {
+            edo = 3;
+            token = GetToken();
+        }
+        break;
+    case 3:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            token = GetToken();
+        }
+        else
+        {
+            GetToken();
+        }
+        break;
+    default:
+        break;
+    }
+}
 /*-------------------------- VAR --------------------------- */
 void sintaxisVAR(struct Token token, int edo)
 {
@@ -303,6 +562,10 @@ void sintaxisMostrar(struct Token token, int edo)
         }
         break;
     }
+}
+/*---------------------------------------------------------*/
+void sentencia(struct Token token)
+{
 }
 /*-------------------------------------------------------- */
 
