@@ -47,7 +47,6 @@ char *TiposBoolean[] = {
     "true",
     "false"};
 
-
 enum TipoToken
 {
     PalRes = 1,
@@ -84,6 +83,29 @@ char tipoAsignacion = 0;
 int columna = 0;
 int fila = 1;
 
+
+void insertar(struct Token token)
+{
+    struct nodo *nuevo;
+    nuevo = malloc(sizeof(struct nodo));
+
+    nuevo->info = token;
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+
+    if (raiz == NULL)
+    {
+        raiz = nuevo;
+        actual = nuevo;
+    }
+    else
+    {
+        nuevo->izq = actual;
+        actual->der = nuevo;
+        actual = nuevo;
+    }
+}
+
 int asignarPalRes(char *palabra)
 {
     if (strcmp(palabra, "INICIO") == 0 || strcmp(palabra, "FIN") == 0 || strcmp(palabra, "POR") == 0 || strcmp(palabra, "SI") == 0 || strcmp(palabra, "MOSTRAR") == 0 || strcmp(palabra, "REGRESA") == 0 || strcmp(palabra, "ENTONCES") == 0 || strcmp(palabra, "ROMPER") == 0 || strcmp(palabra, "NO") == 0 || strcmp(palabra, "VAR") == 0)
@@ -97,27 +119,7 @@ int asignarPalRes(char *palabra)
     }
 }
 
-int asignarIdentificador(char caracter)
-{
-    if (isalpha(caracter) && estadoAsignacion == 0)
-    {
-        tipoAsignacion = 2;
-        estadoAsignacion = 1;
-        statusLectura = 1;
-        bufferLectura[strlen(bufferLectura)] = caracter;
-        return 0;
-    }
-    else if (isalnum(caracter) && estadoAsignacion == 1)
-    {
-        bufferLectura[strlen(bufferLectura)] = caracter;
-        statusLectura = 1;
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-}
+
 
 int asignarConstante(char caracter)
 {
@@ -155,97 +157,6 @@ int asignarSimbolo(char caracter)
     }
 }
 
-void insertar(struct Token token)
-{
-    struct nodo *nuevo;
-    nuevo = malloc(sizeof(struct nodo));
-
-    nuevo->info = token;
-    nuevo->izq = NULL;
-    nuevo->der = NULL;
-
-    if (raiz == NULL)
-    {
-        raiz = nuevo;
-        actual = nuevo;
-    }
-    else
-    {
-        nuevo->izq = actual;
-        actual->der = nuevo;
-        actual = nuevo;
-    }
-}
-
-void imprimirLista(struct nodo *reco)
-{
-    if (reco != NULL)
-    {
-        printf("Nombre: %s\n", reco->info.Nombre);
-        printf("Tipo: %d\n", reco->info.Tipo);
-        printf("Lexema: %s\n", reco->info.Lexema);
-        printf("Valor: %d\n", reco->info.Valor);
-        printf("Numero de Linea: %d\n", reco->info.NoLin);
-        // printf("Numero de Columna: %d\n", reco->info.NoCol);
-        printf("-------\n");
-        imprimirLista(reco->der);
-    }
-}
-
-void leer(char *path)
-{
-    FILE *archivo;
-    char caracter;
-    archivo = fopen(path, "r");
-    if (archivo == NULL)
-    {
-        printf("Fallo en la lectura del archivo %s", path);
-    }
-    else
-    {
-        while ((caracter = fgetc(archivo)) != EOF)
-        {
-            columna++;
-            leerToken(caracter);    
-            if (caracter == '\n')
-            {
-                fila++;
-                columna = 0;
-            }
-        }
-        leerToken(caracter);
-    }
-}
-
-void leerToken(char *caracter)
-{
-    int estadoLectura = 0;
-    if (tipoAsignacion == 0 || tipoAsignacion == 2)
-    {
-        estadoLectura = asignarIdentificador(caracter);
-        if (asignarTipoToken(estadoLectura) == 1)
-        {
-            estadoLectura = 0;
-        };
-    }
-    if (tipoAsignacion == 0 || tipoAsignacion == 3)
-    {
-        estadoLectura = asignarConstante(caracter);
-        if (asignarTipoToken(estadoLectura) == 1)
-        {
-            estadoLectura = 0;
-        };
-    }
-    if (tipoAsignacion == 0 || tipoAsignacion == 4)
-    {
-        estadoLectura = asignarSimbolo(caracter);
-        if (asignarTipoToken(estadoLectura) == 1)
-        {
-            estadoLectura = 0;
-        };
-    }
-}
-
 int asignarTipoToken(int estadoLectura)
 {
     if (estadoLectura == 1 && statusLectura == 1)
@@ -276,6 +187,99 @@ int asignarTipoToken(int estadoLectura)
         return 1;
     }
     return 0;
+}
+
+int asignarIdentificador(char caracter)
+{
+    if (isalpha(caracter) && estadoAsignacion == 0)
+    {
+        tipoAsignacion = 2;
+        estadoAsignacion = 1;
+        statusLectura = 1;
+        bufferLectura[strlen(bufferLectura)] = caracter;
+        return 0;
+    }
+    else if (isalnum(caracter) && estadoAsignacion == 1)
+    {
+        bufferLectura[strlen(bufferLectura)] = caracter;
+        statusLectura = 1;
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+void leerToken(char caracter)
+{
+    int estadoLectura = 0;
+    if (tipoAsignacion == 0 || tipoAsignacion == 2)
+    {
+        estadoLectura = asignarIdentificador(caracter);
+        if (asignarTipoToken(estadoLectura) == 1)
+        {
+            estadoLectura = 0;
+        };
+    }
+    if (tipoAsignacion == 0 || tipoAsignacion == 3)
+    {
+        estadoLectura = asignarConstante(caracter);
+        if (asignarTipoToken(estadoLectura) == 1)
+        {
+            estadoLectura = 0;
+        };
+    }
+    if (tipoAsignacion == 0 || tipoAsignacion == 4)
+    {
+        estadoLectura = asignarSimbolo(caracter);
+        if (asignarTipoToken(estadoLectura) == 1)
+        {
+            estadoLectura = 0;
+        };
+    }
+}
+
+
+void leer(char *path)
+{
+    FILE *archivo;
+    char caracter;
+    archivo = fopen(path, "r");
+    if (archivo == NULL)
+    {
+        printf("Fallo en la lectura del archivo %s", path);
+    }
+    else
+    {
+        while ((caracter = fgetc(archivo)) != EOF)
+        {
+            columna++;
+            leerToken(caracter);
+            if (caracter == '\n')
+            {
+                fila++;
+                columna = 0;
+            }
+        }
+        leerToken(caracter);
+    }
+}
+
+
+
+void imprimirLista(struct nodo *reco)
+{
+    if (reco != NULL)
+    {
+        printf("Nombre: %s\n", reco->info.Nombre);
+        printf("Tipo: %d\n", reco->info.Tipo);
+        printf("Lexema: %s\n", reco->info.Lexema);
+        printf("Valor: %d\n", reco->info.Valor);
+        printf("Numero de Linea: %d\n", reco->info.NoLin);
+        // printf("Numero de Columna: %d\n", reco->info.NoCol);
+        printf("-------\n");
+        imprimirLista(reco->der);
+    }
 }
 
 struct Token GetToken()
@@ -356,6 +360,85 @@ int compararOpLog(char *lexema)
     }
     return 1;
 }
+
+/*---------------------------------------------------------*/
+
+int mostrarError(char *esperado, struct Token token)
+{
+    printf("Error - %i: Se esperaba \"%s\" pero se encontro \"%s\" \n", token.NoLin, esperado, token.Lexema);
+}
+
+/*-------------------------- VAR --------------------------- */
+void sentenciaVariable(struct Token token, int edo)
+{
+    switch (edo)
+    {
+    case 1:
+        if (strcmp(token.Lexema, "VAR") == 0)
+        {
+            edo = 2;
+        }
+        else
+        {
+            edo = 7;
+            mostrarError("VAR", token);
+        }
+        break;
+    case 2:
+        if (token.Tipo == Id)
+        {
+            edo = 3;
+        }
+        else
+        {
+            edo = 30;
+            mostrarError("Identificador", token);
+        }
+        break;
+    case 3:
+        if (strcmp(token.Lexema, ":") == 0)
+        {
+            edo = 4;
+        }
+        else
+        {
+            edo = 7;
+            mostrarError(":", token);
+        }
+        break;
+    case 4:
+        if (compararVAR(token.Lexema))
+        {
+            edo = 5;
+        }
+        else
+        {
+            edo = 7;
+            mostrarError("Un tipo de dato valido", token);
+        }
+        break;
+    case 5:
+        if (strcmp(token.Lexema, ";") == 0)
+        {
+            edo = 6;
+        }
+        else if (strcmp(token.Lexema, ",") == 0)
+        {
+            edo = 2;
+        }
+        else
+        {
+            edo = 7;
+            mostrarError("; o ,", token);
+        }
+        break;
+    }
+    if (edo != 6)
+    {
+        sentenciaVariable(GetToken(), edo);
+    }
+}
+
 /*--------------------- IF -----------------------*/
 void factorElse(struct Token token, int edo)
 {
@@ -366,8 +449,9 @@ void factorElse(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("NO", token);
         }
         break;
@@ -380,8 +464,9 @@ void factorElse(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("FIN", token);
         }
         break;
@@ -390,8 +475,9 @@ void factorElse(struct Token token, int edo)
         {
             edo = 5;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("NO", token);
         }
         break;
@@ -412,8 +498,9 @@ void factorElseIf(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("NO", token);
         }
         break;
@@ -422,8 +509,9 @@ void factorElseIf(struct Token token, int edo)
         {
             edo = 3;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("SI", token);
         }
         break;
@@ -436,8 +524,9 @@ void factorElseIf(struct Token token, int edo)
         {
             edo = 5;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("NO", token);
         }
         break;
@@ -447,8 +536,9 @@ void factorElseIf(struct Token token, int edo)
             edo = 6;
             GetToken();
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("SI", token);
         }
         break;
@@ -469,8 +559,9 @@ void factorIf(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("(", token);
         }
         break;
@@ -483,8 +574,9 @@ void factorIf(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError(")", token);
         }
         break;
@@ -493,21 +585,23 @@ void factorIf(struct Token token, int edo)
         {
             edo = 5;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("ENTONCES", token);
         }
         break;
-    case 5:  
-        mainProgram(GetToken(),6);
+    case 5:
+        mainProgram(GetToken(), 6);
         break;
     case 6:
         if ((strcmp(token.Lexema, "FIN") == 0) && (token.Tipo == PalRes))
         {
             edo = 7;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("FIN", token);
         }
         break;
@@ -529,8 +623,9 @@ void sentenciaSi(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("SI", token);
         }
         break;
@@ -542,8 +637,9 @@ void sentenciaSi(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("FIN", token);
         }
         break;
@@ -624,8 +720,9 @@ void factorOpLog(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError(")", token);
         }
         break;
@@ -647,8 +744,9 @@ void opLog(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=312;
+        else
+        {
+            edo = 312;
             mostrarError("Un booleano", token);
         }
         break;
@@ -657,9 +755,10 @@ void opLog(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
+        else
+        {
             edo = 3060;
-            mostrarError("Un booleano",token);
+            mostrarError("Un booleano", token);
         }
         break;
     case 3:
@@ -669,7 +768,7 @@ void opLog(struct Token token, int edo)
         }
         else
         {
-            edo = 5;       
+            edo = 5;
         }
         break;
     case 4:
@@ -677,7 +776,8 @@ void opLog(struct Token token, int edo)
         {
             edo = 1;
         }
-        else{
+        else
+        {
             edo = 30;
             mostrarError("Un booleano", token);
         }
@@ -700,8 +800,9 @@ void sentenciaLeer(struct Token token, int edo)
         {
             edo = 2;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError("(", token);
         }
         break;
@@ -710,9 +811,10 @@ void sentenciaLeer(struct Token token, int edo)
         {
             edo = 3;
         }
-        else{
-            edo=423;
-            mostrarError("Identificar",token);
+        else
+        {
+            edo = 423;
+            mostrarError("Identificar", token);
         }
         break;
     case 3:
@@ -720,8 +822,9 @@ void sentenciaLeer(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
-            edo=123;
+        else
+        {
+            edo = 123;
             mostrarError(")", token);
         }
         break;
@@ -730,7 +833,8 @@ void sentenciaLeer(struct Token token, int edo)
         {
             edo = 5;
         }
-        else{
+        else
+        {
             edo = 30;
             mostrarError(";", token);
         }
@@ -755,8 +859,8 @@ void expAritOP(struct Token token, int edo)
         }
         else
         {
-            edo=12312;
-            mostrarError("Un numero",token);
+            edo = 12312;
+            mostrarError("Un numero", token);
         }
         break;
     case 2:
@@ -776,8 +880,8 @@ void expAritOP(struct Token token, int edo)
         }
         else
         {
-            edo=12312;
-            mostrarError("Un numero",token);
+            edo = 12312;
+            mostrarError("Un numero", token);
         }
         break;
     case 4:
@@ -838,7 +942,8 @@ void expFactor(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
+        else
+        {
             edo = 30;
             mostrarError("(", token);
         }
@@ -847,7 +952,9 @@ void expFactor(struct Token token, int edo)
         if (compararOPArit(token.Lexema))
         {
             edo = 3;
-        }else{
+        }
+        else
+        {
             edo = 40;
             mostrarError("Un operador aritmetico", token);
         }
@@ -871,72 +978,7 @@ void expFactor(struct Token token, int edo)
         expFactor(GetToken(), edo);
     }
 }
-/*-------------------------- VAR --------------------------- */
-void sentenciaVariable(struct Token token, int edo)
-{
-    switch (edo)
-    {
-    case 1:
-        if (strcmp(token.Lexema, "VAR") == 0)
-        {
-            edo = 2;
-        }
-        else{
-            edo=7;
-            mostrarError("VAR", token);
-        }
-        break;
-    case 2:
-        if (token.Tipo == Id)
-        {
-            edo = 3;
-        }
-        else{
-            edo = 30;
-            mostrarError("Identificador", token);
 
-        }
-        break;
-    case 3:
-        if (strcmp(token.Lexema, ":") == 0)
-        {
-            edo = 4;
-        }
-        else{
-            edo=7;
-            mostrarError(":", token);
-        }
-        break;
-    case 4:
-        if (compararVAR(token.Lexema))
-        {
-            edo = 5;
-        }
-        else{
-            edo=7;
-            mostrarError("Un tipo de dato valido", token);
-        }
-        break;
-    case 5:
-        if (strcmp(token.Lexema, ";") == 0)
-        {
-            edo = 6;
-        }
-        else if (strcmp(token.Lexema, ",") == 0)
-        {
-            edo = 2;
-        }
-        else{
-            edo=7;
-            mostrarError("; o ,", token);
-        }
-        break;
-    }
-    if (edo != 6)
-    {
-        sentenciaVariable(GetToken(), edo);
-    }
-}
 /*----------------------- MOSTRAR -------------------------- */
 void sentenciaMostrar(struct Token token, int edo)
 {
@@ -948,7 +990,7 @@ void sentenciaMostrar(struct Token token, int edo)
         }
         else
         {
-            edo=7;
+            edo = 7;
             mostrarError("MOSTRAR", token);
         }
     case 2:
@@ -956,7 +998,8 @@ void sentenciaMostrar(struct Token token, int edo)
         {
             edo = 3;
         }
-        else{
+        else
+        {
             edo = 7;
             mostrarError("(", token);
         }
@@ -966,7 +1009,8 @@ void sentenciaMostrar(struct Token token, int edo)
         {
             edo = 4;
         }
-        else{
+        else
+        {
             edo = 7;
             mostrarError("Cadena o identificador", token);
         }
@@ -976,7 +1020,8 @@ void sentenciaMostrar(struct Token token, int edo)
         {
             edo = 5;
         }
-        else{
+        else
+        {
             edo = 7;
             mostrarError(")", token);
         }
@@ -986,7 +1031,8 @@ void sentenciaMostrar(struct Token token, int edo)
         {
             edo = 6;
             token = GetToken();
-        }else
+        }
+        else
         {
             edo = 7;
             mostrarError(";", token);
@@ -998,7 +1044,35 @@ void sentenciaMostrar(struct Token token, int edo)
         sentenciaMostrar(GetToken(), edo);
     }
 }
-/*---------------------------------------------------------*/
+
+
+/*-------------------------------------------------------- */
+int identificarSentencia(struct Token token)
+{
+    int edo = 2;
+    if ((strcmp(token.Lexema, "VAR") == 0) && (token.Tipo == PalRes))
+    {
+        sentenciaVariable(token, 1);
+    }
+    else if ((strcmp(token.Lexema, "MOSTRAR") == 0) && (token.Tipo == PalRes))
+    {
+        sentenciaMostrar(token, 1);
+    }
+    else if ((strcmp(token.Lexema, "LEER") == 0) && (token.Tipo == PalRes))
+    {
+        sentenciaLeer(token, 1);
+    }
+    else if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
+    {
+        sentenciaSi(token, 1);
+    }
+    else
+    {
+        edo = 3;
+    }
+    return edo;
+}
+
 void mainProgram(struct Token token, int edo)
 {
     switch (edo)
@@ -1006,12 +1080,12 @@ void mainProgram(struct Token token, int edo)
     case 1:
         if (strcmp(token.Lexema, "INICIO") == 0)
         {
-            mainProgam(GetToken(),2);
+            mainProgram(GetToken(), 2);
         }
         else
         {
             edo = 4;
-            mostrarError("INICIO",token);
+            mostrarError("INICIO", token);
         }
         break;
 
@@ -1036,42 +1110,15 @@ void mainProgram(struct Token token, int edo)
     }
 }
 
-int mostrarError(char* esperado,struct Token token){
-    printf("Error en \"%s\" Se esperaba \"%s\" pero se encontro %s",token.NoLin ,esperado, token.Lexema);
-}
-
-int identificarSentencia(struct Token token)
-{
-    int edo = 2;
-    if ((strcmp(token.Lexema, "VAR") == 0) && (token.Tipo == PalRes))
-    {
-        sentenciaVariable(token,1);
-    }
-    else if ((strcmp(token.Lexema, "MOSTRAR") == 0) && (token.Tipo == PalRes))
-    {
-        sentenciaMostrar(token,1);
-    }
-     else if ((strcmp(token.Lexema, "LEER") == 0) && (token.Tipo == PalRes))
-    {
-        sentenciaLeer(token,1);
-    }
-     else if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
-    {
-        sentenciaSi(token,1);
-    }
-    else{
-        edo = 3;
-    }
-    return edo;
-}    
-/*-------------------------------------------------------- */
 
 int main()
 {
     printf("=====LISTA DE TOKENS=====\n");
     leer("test.ck");
     imprimirLista(raiz);
-   mainProgram(actual->info,1);
+    actual = raiz;
+    mainProgram(actual->info, 1);
     getch();
     return 0;
 }
+

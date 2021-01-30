@@ -1,4 +1,3 @@
 INICIO 
-algo(10!=20)
-VAR suma=10+5;    
+pepe = 2
 FIN
