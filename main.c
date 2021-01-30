@@ -537,13 +537,13 @@ void sentenciaSi(struct Token token, int edo)
         edo = 3;
         factorIf(GetToken(), 1);
     case 3:
-        if ((strcmp(token.Lexema, "FIN") == 0) && (token.Tipo == PalRes))
+        if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
         {
             edo = 4;
         }
         else{
             edo=123;
-            mostrarError("FIN", token);
+            mostrarError("SI", token);
         }
         break;
     default:
