@@ -4,14 +4,14 @@
 #include <string.h>
 #include <ctype.h>
 
-enum TipoToken
-{
-    PalRes,
-    Id,
-    Num,
-    Sim,
-    Cad
-};
+// enum TipoToken
+// {
+//     PalRes,
+//     Id,
+//     Num,
+//     Sim,
+//     Cad
+// };
 
 char *TiposVAR[] =
     {
@@ -28,7 +28,7 @@ char *TiposOPArit[] =
         "+",
         "-"};
 
-char TiposOPLogSimb[] = {
+char *TiposOPLogSimb[] = {
     "|",
     "&",
     "=",
@@ -53,7 +53,8 @@ enum TipoToken
     PalRes = 1,
     Id = 2,
     Num = 3,
-    Sim = 4
+    Sim = 4,
+    Cad = 5
 };
 
 struct Token
@@ -537,13 +538,13 @@ void sentenciaSi(struct Token token, int edo)
         edo = 3;
         factorIf(GetToken(), 1);
     case 3:
-        if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
+        if ((strcmp(token.Lexema, "FIN") == 0) && (token.Tipo == PalRes))
         {
             edo = 4;
         }
         else{
             edo=123;
-            mostrarError("SI", token);
+            mostrarError("FIN", token);
         }
         break;
     default:
@@ -1070,7 +1071,7 @@ int main()
     printf("=====LISTA DE TOKENS=====\n");
     leer("test.ck");
     imprimirLista(raiz);
-    mainProgram(actual->info,1);
+   mainProgram(actual->info,1);
     getch();
     return 0;
 }
