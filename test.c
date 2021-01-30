@@ -189,6 +189,10 @@ void factorElse(struct Token token, int edo)
         {
             edo = 2;
         }
+        else{
+            edo=123;
+            mostrarError("NO", token);
+        }
         break;
     case 2:
         edo = 3;
@@ -199,11 +203,19 @@ void factorElse(struct Token token, int edo)
         {
             edo = 4;
         }
+        else{
+            edo=123;
+            mostrarError("FIN", token);
+        }
         break;
     case 4:
         if ((strcmp(token.Lexema, "NO") == 0) && (token.Tipo == PalRes))
         {
             edo = 5;
+        }
+        else{
+            edo=123;
+            mostrarError("NO", token);
         }
         break;
     default:
@@ -223,11 +235,19 @@ void factorElseIf(struct Token token, int edo)
         {
             edo = 2;
         }
+        else{
+            edo=123;
+            mostrarError("NO", token);
+        }
         break;
     case 2:
         if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
         {
             edo = 3;
+        }
+        else{
+            edo=123;
+            mostrarError("SI", token);
         }
         break;
     case 3:
@@ -239,12 +259,20 @@ void factorElseIf(struct Token token, int edo)
         {
             edo = 5;
         }
+        else{
+            edo=123;
+            mostrarError("NO", token);
+        }
         break;
     case 5:
         if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
         {
             edo = 6;
             GetToken();
+        }
+        else{
+            edo=123;
+            mostrarError("SI", token);
         }
         break;
     default:
@@ -293,9 +321,8 @@ void factorIf(struct Token token, int edo)
             mostrarError("ENTONCES", token);
         }
         break;
-    case 5:
-        edo = 6;
-        mainProgram(GetToken(),);
+    case 5:  
+        mainProgram(GetToken(),6);
         break;
     case 6:
         if ((strcmp(token.Lexema, "FIN") == 0) && (token.Tipo == PalRes))
@@ -445,7 +472,7 @@ void opLog(struct Token token, int edo)
         }
         else{
             edo=312;
-            mostrarError("Un booleano baboso", token);
+            mostrarError("Un booleano", token);
         }
         break;
     case 2:
@@ -455,7 +482,7 @@ void opLog(struct Token token, int edo)
         }
         else{
             edo = 3060;
-            mostrarError("Un booleano estupido",token);
+            mostrarError("Un booleano",token);
         }
         break;
     case 3:
@@ -508,7 +535,7 @@ void sentenciaLeer(struct Token token, int edo)
         }
         else{
             edo=423;
-            mostrarError("Identificar",token)
+            mostrarError("Identificar",token);
         }
         break;
     case 3:
