@@ -108,7 +108,7 @@ void insertar(struct Token token)
 
 int asignarPalRes(char *palabra)
 {
-    if (strcmp(palabra, "INICIO") == 0 || strcmp(palabra, "FIN") == 0 || strcmp(palabra, "POR") == 0 || strcmp(palabra, "SI") == 0 || strcmp(palabra, "MOSTRAR") == 0 || strcmp(palabra, "REGRESA") == 0 || strcmp(palabra, "ENTONCES") == 0 || strcmp(palabra, "ROMPER") == 0 || strcmp(palabra, "NO") == 0 || strcmp(palabra, "VAR") == 0)
+    if (strcmp(palabra, "INICIO") == 0 || strcmp(palabra, "FIN") == 0 || strcmp(palabra, "POR") == 0 || strcmp(palabra, "SI") == 0 || strcmp(palabra, "MOSTRAR") == 0 || strcmp(palabra, "REGRESA") == 0 || strcmp(palabra, "ENTONCES") == 0 || strcmp(palabra, "ROMPER") == 0 || strcmp(palabra, "NO") == 0 || strcmp(palabra, "VAR") == 0 || strcmp(palabra, "LEER") == 0)
     {
         tipoAsignacion = 1;
         return 1;
@@ -144,7 +144,7 @@ int asignarConstante(char caracter)
 
 int asignarSimbolo(char caracter)
 {
-    if (caracter == ';' || caracter == '{' || caracter == '=' || caracter == '}' || caracter == '<' || caracter == '>' || caracter == '&' || caracter == '|' || caracter == '(' || caracter == ')' || caracter == '/' || caracter == '+' || caracter == '-' || caracter == '.' || caracter == '"' || caracter == '!')
+    if (caracter == ';' || caracter == '{' || caracter == '=' || caracter == '}' || caracter == '<' || caracter == '>' || caracter == '&' || caracter == '|' || caracter == '(' || caracter == ')' || caracter == '/' || caracter == '+' || caracter == '-' || caracter == '.' || caracter == '"' || caracter == '!' || caracter == ':')
     {
         bufferLectura[strlen(bufferLectura)] = caracter;
         statusLectura = 1;
@@ -407,9 +407,10 @@ void sentenciaVariable(struct Token token, int edo)
         }
         break;
     case 4:
-        if (compararVAR(token.Lexema))
+        if (compararVAR(token.Lexema) == 0)
         {
             edo = 5;
+            
         }
         else
         {
@@ -422,14 +423,10 @@ void sentenciaVariable(struct Token token, int edo)
         {
             edo = 6;
         }
-        else if (strcmp(token.Lexema, ",") == 0)
-        {
-            edo = 2;
-        }
         else
         {
             edo = 7;
-            mostrarError("; o ,", token);
+            mostrarError(";", token);
         }
         break;
     }
@@ -631,16 +628,16 @@ void sentenciaSi(struct Token token, int edo)
         break;
     case 2:
         edo = 3;
-        factorIf(GetToken(), 1);
+        factorIf(token, 1);
     case 3:
-        if ((strcmp(token.Lexema, "FIN") == 0) && (token.Tipo == PalRes))
+        if ((strcmp(token.Lexema, "SI") == 0) && (token.Tipo == PalRes))
         {
             edo = 4;
         }
         else
         {
             edo = 123;
-            mostrarError("FIN", token);
+            mostrarError("SI", token);
         }
         break;
     default:
@@ -707,13 +704,22 @@ void factorOpLog(struct Token token, int edo)
             else
             {
                 edo = 4;
-                opLog(GetToken(), 1);
+                opLog(token, 1);
             }
         }
         break;
     case 2:
-        edo = 3;
-        opLog(GetToken(), 1);
+        // edo = 3;
+        // opLog(token, 1);
+        if(compararBoolean(token.Lexema) == 0)
+        {
+            edo = 3;
+        }
+        else
+        {
+            edo = 312;
+            mostrarError("Un booleano", token);
+        }
         break;
     case 3:
         if (strcmp(token.Lexema, ")") == 0)
@@ -753,11 +759,11 @@ void opLog(struct Token token, int edo)
     case 2:
         if (compararBoolean(token.Lexema) == 0)
         {
-            edo = 2;
+            edo = 3;
         }
         else
         {
-            edo = 3060;
+            edo = 360;
             mostrarError("Un booleano", token);
         }
         break;
@@ -796,9 +802,20 @@ void sentenciaLeer(struct Token token, int edo)
     switch (edo)
     {
     case 1:
-        if (strcmp(token.Lexema, "(") == 0)
+        if(strcmp(token.Lexema, "LEER") == 0)
         {
             edo = 2;
+        }
+        else
+        {
+            edo = 123;
+            mostrarError("LEER", token);
+        }
+        break;
+    case 2:
+        if (strcmp(token.Lexema, "(") == 0)
+        {
+            edo = 3;
         }
         else
         {
@@ -806,10 +823,10 @@ void sentenciaLeer(struct Token token, int edo)
             mostrarError("(", token);
         }
         break;
-    case 2:
+    case 3:
         if (token.Tipo == Id)
         {
-            edo = 3;
+            edo = 4;
         }
         else
         {
@@ -817,10 +834,10 @@ void sentenciaLeer(struct Token token, int edo)
             mostrarError("Identificar", token);
         }
         break;
-    case 3:
+    case 4:
         if (strcmp(token.Lexema, ")") == 0)
         {
-            edo = 4;
+            edo = 5;
         }
         else
         {
@@ -828,10 +845,10 @@ void sentenciaLeer(struct Token token, int edo)
             mostrarError(")", token);
         }
         break;
-    case 4:
+    case 5:
         if (strcmp(token.Lexema, ";") == 0)
         {
-            edo = 5;
+            edo = 6;
         }
         else
         {
@@ -842,7 +859,7 @@ void sentenciaLeer(struct Token token, int edo)
     default:
         break;
     }
-    if (edo != 5)
+    if (edo != 6)
     {
         sentenciaLeer(GetToken(), edo);
     }
@@ -1090,7 +1107,7 @@ void mainProgram(struct Token token, int edo)
         break;
 
     case 2:
-        edo = identificarSentencia(GetToken());
+        edo = identificarSentencia(token);
         mainProgram(GetToken(), edo);
         break;
     case 3:

@@ -1,3 +1,7 @@
 INICIO 
-pepe = 2
+SI (true) ENTONCES
+VAR test:numero;
+SI NO
+VAR PUTO:palabra;
+FIN SI
 FIN
