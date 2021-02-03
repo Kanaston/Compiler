@@ -144,7 +144,7 @@ int asignarConstante(char caracter)
 
 int asignarSimbolo(char caracter)
 {
-    if (caracter == ';' || caracter == '{' || caracter == '=' || caracter == '}' || caracter == '<' || caracter == '>' || caracter == '&' || caracter == '|' || caracter == '(' || caracter == ')' || caracter == '/' || caracter == '+' || caracter == '-' || caracter == '.' || caracter == '"' || caracter == '!' || caracter == ':')
+    if (caracter == ';' || caracter == '{' || caracter == '=' || caracter == '}' || caracter == '<' || caracter == '>' || caracter == '&' || caracter == '|' || caracter == '(' || caracter == ')' || caracter == '/' || caracter == '+' || caracter == '-' || caracter == '.' || caracter == '"' || caracter == '!' || caracter == ':' || caracter == '?')
     {
         bufferLectura[strlen(bufferLectura)] = caracter;
         statusLectura = 1;
@@ -1001,6 +1001,7 @@ void sentenciaMostrar(struct Token token, int edo)
 {
     switch (edo)
     {
+    case 1:
         if (strcmp(token.Lexema, "MOSTRAR") == 0)
         {
             edo = 2;
@@ -1010,6 +1011,7 @@ void sentenciaMostrar(struct Token token, int edo)
             edo = 7;
             mostrarError("MOSTRAR", token);
         }
+        break;
     case 2:
         if (strcmp(token.Lexema, "(") == 0)
         {
